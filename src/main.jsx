@@ -1,10 +1,10 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import App from "./App";
-import Docs from "./pages/Docs";
-import Papers from "./pages/Papers";
-import Simulations from "./pages/Simulations";
+import App from "./App.jsx";
+import Docs from "./pages/Docs.jsx";
+import Papers from "./pages/Papers.jsx";
+import Simulations from "./pages/Simulations.jsx";
 
 ReactDOM.createRoot(document.getElementById("root")).render(
   <React.StrictMode>
