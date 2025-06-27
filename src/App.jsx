@@ -1,7 +1,6 @@
 
 import React from "react";
 import EquationReveal from "./components/EquationReveal";
-import ISRMGuardianSim from "./components/ISRMGuardianSim";
 import WhatIsISRM from "./components/WhatIsISRM";
 
 export default function App() {
@@ -26,11 +25,6 @@ export default function App() {
 
       <section className="mb-12">
         <EquationReveal />
-      </section>
-
-      <section className="text-center">
-        <h2 className="text-3xl font-semibold mb-4">🤖 ISRM Ball Avoidance Simulation</h2>
-        <ISRMGuardianSim />
       </section>
     </div>
   );
