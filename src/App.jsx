@@ -8,15 +8,19 @@ import ISRMOrbitSimulation from './components/ISRMOrbitSimulation';
 function Home() {
   return (
     <div className="relative w-full min-h-screen overflow-hidden font-sans text-slate-100">
-      <video
+      
+
+<video
         autoPlay
         loop
         muted
         playsInline
-        className="absolute top-0 left-0 w-full h-full object-cover opacity-20 pointer-events-none z-0"
+        className="absolute top-[-50px] left-0 w-full h-[120%] object-cover opacity-20 pointer-events-none z-0"
       >
         <source src="/Neural_Network_Integration_Animation.mp4" type="video/mp4" />
       </video>
+
+
 
       <div className="relative z-10 px-6 py-12">
         <header className="mb-12 text-center">
