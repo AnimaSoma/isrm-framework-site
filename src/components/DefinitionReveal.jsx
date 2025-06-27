@@ -10,7 +10,7 @@ const definitions = [
   {
     label: "🧠 From a Neuroscientist",
     title: "A principle for energy-efficient updates in the brain's predictive and conscious systems.",
-    example: "🧠 Real-life example: The Attentional Blink. ISRM explains the delay between perceiving two rapid stimuli as coherence protection: the system avoids updating while energetically saturated."
+    example: "🧠 Real-life example: Astrocyte-neuron metabolic coupling. ISRM explains how astrocytes gate neuronal updating by regulating energetic access based on coherence, preventing excessive firing when predictive utility is low."
   },
   {
     label: "⚛️ From a Physicist",
@@ -59,6 +59,20 @@ export default function DefinitionReveal() {
             )}
           </div>
         ))}
+      </div>
+      <div className="mt-10 text-slate-100 text-base md:text-lg leading-relaxed text-center max-w-3xl mx-auto">
+        <p className="mb-4">
+          The Interactionist Self-Regulation Model (ISRM) proposes that all adaptive systems—
+          whether cellular, cognitive, artificial, or cosmological—evolve by regulating when to update their internal state.
+        </p>
+        <p className="mb-4">
+          This decision is governed by a scalar function <code>U(t)</code>, defined by the balance between predicted coherence gain (ΔC),
+          energetic cost (E), and contextual salience (S). An update occurs only if <code>U(t) = ΔC(t) - E(t) + S(t)</code> exceeds threshold.
+        </p>
+        <p>
+          ISRM reframes adaptation as a coherence-driven, energy-constrained process that scales from the atom to the cosmos, offering a unifying logic
+          behind learning, consciousness, cellular state switching, quantum behavior, and the emergence of time itself.
+        </p>
       </div>
     </div>
   );
