@@ -1,7 +1,8 @@
 
 import React from "react";
-import ISRMGuardianSim from "./components/ISRMGuardianSim";
 import EquationReveal from "./components/EquationReveal";
+import ISRMGuardianSim from "./components/ISRMGuardianSim";
+import WhatIsISRM from "./components/WhatIsISRM";
 
 export default function App() {
   return (
@@ -17,6 +18,10 @@ export default function App() {
           systems—from particles to people—update their internal states based on coherence, prediction error,
           and energetic cost, quantified by a scalar function U(t).
         </p>
+      </section>
+
+      <section className="mb-12">
+        <WhatIsISRM />
       </section>
 
       <section className="mb-12">
