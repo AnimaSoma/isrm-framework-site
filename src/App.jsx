@@ -27,6 +27,7 @@ function Home() {
         </p>
       </main>
 <DefinitionReveal />
+<EquationReveal />
     </div>
   );
 }
@@ -37,6 +38,7 @@ const Papers = () => <div className="p-10 text-slate-100">[Research papers and p
 const About = () => <div className="p-10 text-slate-100">[About the ISRM project]</div>;
 
 import DefinitionReveal from './components/DefinitionReveal';
+import EquationReveal from './components/EquationReveal';
 
 export default function App() {
   return (

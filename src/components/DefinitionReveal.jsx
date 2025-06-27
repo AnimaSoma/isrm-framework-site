@@ -21,6 +21,10 @@ const definitions = [
   {
     label: "🌌 From a Cosmologist",
     text: "A framework for understanding time and entropy as outcomes of update costs."
+  },
+  {
+    label: "📉 From an Economist",
+    text: "A model for rational adaptation under cost-benefit constraints, usable across markets and decision systems."
   }
 ];
 
@@ -28,7 +32,7 @@ export default function DefinitionReveal() {
   const [active, setActive] = useState(null);
 
   return (
-    <div className="max-w-5xl mx-auto mt-16 px-4">
+    <div className="max-w-5xl mx-auto mt-16 px-4 font-sans">
       <h2 className="text-3xl font-semibold text-center text-slate-100 mb-6">
         What is ISRM?
       </h2>
