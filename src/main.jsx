@@ -2,7 +2,7 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import App from "./App";
+import App from "./App.jsx";
 import Docs from "./pages/Docs";
 import Papers from "./pages/Papers";
 import Simulations from "./pages/Simulations";
