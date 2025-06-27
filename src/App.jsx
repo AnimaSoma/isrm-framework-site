@@ -1,10 +1,13 @@
 
 import React from "react";
 import { BrowserRouter as Router, Routes, Route, Link } from "react-router-dom";
+import DefinitionReveal from './components/DefinitionReveal';
+import EquationReveal from './components/EquationReveal';
+import ISRMOrbitSimulation from './components/ISRMOrbitSimulation';
 
 function Home() {
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-950 text-slate-100 px-6 py-12">
+    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-950 text-slate-100 px-6 py-12 font-sans">
       <header className="mb-12 text-center">
         <h1 className="text-5xl font-serif font-bold mb-3 tracking-tight">Interactionist Self-Regulation Model (ISRM)</h1>
         <p className="text-xl text-cyan-300">A coherence-driven theory of adaptation from atoms to AI</p>
@@ -26,9 +29,9 @@ function Home() {
           Explore the <Link to="/docs" className="text-cyan-300 underline">framework documentation</Link>, view live <Link to="/simulations" className="text-cyan-300 underline">simulations</Link>, or read our <Link to="/papers" className="text-cyan-300 underline">research papers</Link>.
         </p>
       </main>
-<DefinitionReveal />
-<EquationReveal />
-<ISRMOrbitSimulation />
+      <EquationReveal />
+      <ISRMOrbitSimulation />
+      <DefinitionReveal />
     </div>
   );
 }
@@ -37,10 +40,6 @@ const Docs = () => <div className="p-10 text-slate-100">[Documentation coming so
 const Simulations = () => <div className="p-10 text-slate-100">[Simulations will be interactive]</div>;
 const Papers = () => <div className="p-10 text-slate-100">[Research papers and preprints]</div>;
 const About = () => <div className="p-10 text-slate-100">[About the ISRM project]</div>;
-
-import DefinitionReveal from './components/DefinitionReveal';
-import EquationReveal from './components/EquationReveal';
-import ISRMOrbitSimulation from './components/ISRMOrbitSimulation';
 
 export default function App() {
   return (
