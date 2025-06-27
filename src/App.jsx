@@ -26,6 +26,7 @@ function Home() {
           Explore the <Link to="/docs" className="text-cyan-300 underline">framework documentation</Link>, view live <Link to="/simulations" className="text-cyan-300 underline">simulations</Link>, or read our <Link to="/papers" className="text-cyan-300 underline">research papers</Link>.
         </p>
       </main>
+<DefinitionReveal />
     </div>
   );
 }
@@ -34,6 +35,8 @@ const Docs = () => <div className="p-10 text-slate-100">[Documentation coming so
 const Simulations = () => <div className="p-10 text-slate-100">[Simulations will be interactive]</div>;
 const Papers = () => <div className="p-10 text-slate-100">[Research papers and preprints]</div>;
 const About = () => <div className="p-10 text-slate-100">[About the ISRM project]</div>;
+
+import DefinitionReveal from './components/DefinitionReveal';
 
 export default function App() {
   return (
