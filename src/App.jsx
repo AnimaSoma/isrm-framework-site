@@ -28,6 +28,7 @@ function Home() {
       </main>
 <DefinitionReveal />
 <EquationReveal />
+<ISRMOrbitSimulation />
     </div>
   );
 }
@@ -39,6 +40,7 @@ const About = () => <div className="p-10 text-slate-100">[About the ISRM project
 
 import DefinitionReveal from './components/DefinitionReveal';
 import EquationReveal from './components/EquationReveal';
+import ISRMOrbitSimulation from './components/ISRMOrbitSimulation';
 
 export default function App() {
   return (
