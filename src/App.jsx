@@ -30,7 +30,7 @@ function Home() {
         </p>
       </main>
       <EquationReveal />
-      <ISRMOrbitSimulation />
+      <div className="mt-6 mb-20"><ISRMOrbitSimulation /></div>
       <DefinitionReveal />
     </div>
   );
