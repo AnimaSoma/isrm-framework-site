@@ -1,8 +1,9 @@
 
-import React, { useRef, useEffect } from "react";
+import React, { useRef, useEffect, useState } from "react";
 
 export default function ISRMOrbitSimulation() {
   const canvasRef = useRef();
+  const [utValues, setUtValues] = useState([]);
 
   useEffect(() => {
     if (typeof window === "undefined") return;
@@ -44,6 +45,8 @@ export default function ISRMOrbitSimulation() {
         agents.push(createAgent());
       }
 
+      const liveUT = [];
+
       agents.forEach((a, i) => {
         const deltaC = 0.5 + 0.5 * Math.sin((frame + i) * 0.01);
         const U = deltaC - a.energy + a.salience;
@@ -60,6 +63,16 @@ export default function ISRMOrbitSimulation() {
           return;
         }
 
+        // Save U(t) data
+        liveUT.push({
+          id: a.id,
+          deltaC: deltaC.toFixed(2),
+          energy: a.energy.toFixed(2),
+          salience: a.salience.toFixed(2),
+          U: U.toFixed(2),
+          persistent: a.persistent
+        });
+
         // Set color
         let fillColor = a.persistent ? "#38bdf8" : U < 0 ? "#f43f5e" : "#60a5fa";
         const opacity = a.persistent ? 1 : Math.max(0.2, U);
@@ -73,9 +86,10 @@ export default function ISRMOrbitSimulation() {
         ctx.font = a.persistent ? "bold 11px Inter" : "10px Inter";
         ctx.fillStyle = "#e0f2fe";
         ctx.textAlign = "center";
-        ctx.fillText(a.persistent ? "IMM" : `U: ${U.toFixed(2)}`, a.x, a.y + a.r + 12);
+        ctx.fillText(`U: ${U.toFixed(2)}`, a.x, a.y + a.r + 12);
       });
 
+      setUtValues(liveUT);
       frame++;
       requestAnimationFrame(tick);
     }
@@ -84,8 +98,8 @@ export default function ISRMOrbitSimulation() {
   }, []);
 
   return (
-    <div className="mt-12 mb-20">
-      <h3 className="text-center text-slate-100 text-xl font-semibold mb-4">ISRM Survival Simulation</h3>
+    <div className="mt-12 mb-20 text-center">
+      <h3 className="text-slate-100 text-xl font-semibold mb-4">ISRM Survival Simulation</h3>
       <canvas
         ref={canvasRef}
         width={1200}
@@ -93,9 +107,15 @@ export default function ISRMOrbitSimulation() {
         className="w-full max-w-full rounded-lg border border-slate-700"
         style={{ background: "#0f172a" }}
       />
-      <p className="text-center text-sm text-slate-400 mt-2">
+      <p className="text-sm text-slate-400 mt-2">
         Agents show their U(t) values. One survives indefinitely.
       </p>
+      <button
+        onClick={() => alert(JSON.stringify(utValues, null, 2))}
+        className="mt-4 px-4 py-2 bg-cyan-700 text-white rounded hover:bg-cyan-600 transition"
+      >
+        📊 View U(t) Source
+      </button>
     </div>
   );
 }
