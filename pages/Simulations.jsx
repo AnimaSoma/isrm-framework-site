@@ -10,12 +10,10 @@ export default function Simulations() {
         Explore interactive simulations demonstrating the Interactionist Self-Regulation Model in action.
       </p>
 
-      {/* Section: Immortal Learner */}
       <section className="mb-16">
         <ISRMImmortalLearner />
       </section>
 
-      {/* Future simulations can be added here */}
       <section className="text-center text-slate-400 text-sm">
         More simulations coming soon: U(t) chart agents, swarm logic, nested coherence...
       </section>
