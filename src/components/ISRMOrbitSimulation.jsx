@@ -24,9 +24,9 @@ export default function ISRMOrbitSimulation() {
         dx: Math.random() * 2 - 1,
         dy: Math.random() * 2 - 1,
         r: persistent ? 10 : 6,
-        coherence: persistent ? 0.9 : Math.random(),
-        energy: 0.5 + Math.random() * 0.5,
-        salience: persistent ? 0.5 : Math.random() * 0.5,
+        coherence: persistent ? 0.95 : Math.random(),
+        energy: persistent ? 0.35 : 0.5 + Math.random() * 0.5,
+        salience: persistent ? 0.45 : Math.random() * 0.5,
         persistent,
         lifespan: persistent ? Infinity : 300 + Math.random() * 300,
         age: 0
@@ -48,8 +48,11 @@ export default function ISRMOrbitSimulation() {
       const liveUT = [];
 
       agents.forEach((a, i) => {
-        const deltaC = 0.5 + 0.5 * Math.sin((frame + i) * 0.01);
-        const U = deltaC - a.energy + a.salience;
+        const deltaC = a.persistent
+          ? 0.6 + 0.4 * Math.sin((frame + i) * 0.005)
+          : 0.5 + 0.5 * Math.sin((frame + i) * 0.01);
+
+        const U = Math.max(0, deltaC - a.energy + a.salience);  // Clamp U to ≥ 0
 
         a.x += a.dx;
         a.y += a.dy;
@@ -58,7 +61,7 @@ export default function ISRMOrbitSimulation() {
         if (a.y < 0 || a.y > height) a.dy *= -1;
 
         a.age += 1;
-        if (!a.persistent && (U < 0 || a.age > a.lifespan)) {
+        if (!a.persistent && (U <= 0 || a.age > a.lifespan)) {
           agents.splice(i, 1);
           return;
         }
@@ -73,20 +76,23 @@ export default function ISRMOrbitSimulation() {
           persistent: a.persistent
         });
 
-        // Set color
-        let fillColor = a.persistent ? "#38bdf8" : U < 0 ? "#f43f5e" : "#60a5fa";
-        const opacity = a.persistent ? 1 : Math.max(0.2, U);
+        // Determine color
+        let fillColor = a.persistent
+          ? `rgba(56, 189, 248, 1)`        // cyan
+          : U < 0.15
+          ? `rgba(244, 63, 94, 0.5)`       // red-fade
+          : `rgba(96, 165, 250, 0.8)`;     // blue
 
         ctx.beginPath();
         ctx.arc(a.x, a.y, a.r, 0, Math.PI * 2);
-        ctx.fillStyle = fillColor + Math.floor(opacity * 255).toString(16).padStart(2, '0');
+        ctx.fillStyle = fillColor;
         ctx.fill();
 
         // Label
         ctx.font = a.persistent ? "bold 11px Inter" : "10px Inter";
         ctx.fillStyle = "#e0f2fe";
         ctx.textAlign = "center";
-        ctx.fillText(`U: ${U.toFixed(2)}`, a.x, a.y + a.r + 12);
+        ctx.fillText(`${a.persistent ? "IMM" : "U"}: ${U.toFixed(2)}`, a.x, a.y + a.r + 12);
       });
 
       setUtValues(liveUT);
