@@ -1,1 +1,6 @@
-// Vite config with module chunking and aliases
+import { defineConfig } from 'vite'
+import react from '@vitejs/plugin-react'
+
+export default defineConfig({
+  plugins: [react()]
+})
