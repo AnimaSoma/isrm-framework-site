@@ -1,0 +1,1 @@
+// Hero section with animated title

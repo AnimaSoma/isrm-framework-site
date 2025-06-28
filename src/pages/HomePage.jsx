@@ -1,1 +1,1 @@
-// HomePage.jsx placeholder content
+// Page composition using components

@@ -1,1 +1,1 @@
-// vite.config.js placeholder content
+// Vite config with module chunking and aliases

@@ -1,1 +1,0 @@
-// SimulationsPage.jsx placeholder content
