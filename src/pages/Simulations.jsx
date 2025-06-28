@@ -1,0 +1,1 @@
+export default function Simulations() { return <div className="p-10 text-white">Simulation page placeholder</div>; }

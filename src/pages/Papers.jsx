@@ -1,0 +1,1 @@
+export default function Papers() { return <div className="p-10 text-white">Papers page placeholder</div>; }
