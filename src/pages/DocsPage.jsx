@@ -1,0 +1,1 @@
+// DocsPage.jsx placeholder content

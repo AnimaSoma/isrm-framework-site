@@ -1,8 +1,1 @@
-
-module.exports = {
-  content: ["./index.html", "./src/**/*.{js,jsx}"],
-  theme: {
-    extend: {},
-  },
-  plugins: [],
-};
+// tailwind.config.js placeholder content
