@@ -1,20 +1,14 @@
-import React from "react";
-import ReactDOM from "react-dom/client";
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import App from "./App";
-import Docs from "./pages/Docs";
-import Papers from "./pages/Papers";
-import Simulations from "./pages/Simulations";
 
-ReactDOM.createRoot(document.getElementById("root")).render(
-  <React.StrictMode>
-    <Router>
-      <Routes>
-        <Route path="/" element={<App />} />
-        <Route path="/docs" element={<Docs />} />
-        <Route path="/papers" element={<Papers />} />
-        <Route path="/simulations" element={<Simulations />} />
-      </Routes>
-    </Router>
-  </React.StrictMode>
-);
+import React from 'react'
+import ReactDOM from 'react-dom/client'
+
+function App() {
+  return (
+    <div style={{ color: 'white', padding: '2rem', textAlign: 'center', background: '#111' }}>
+      <h1>ISRM Framework</h1>
+      <p>U(t) = ∫(P(t) - E(t)) dt — A New Paradigm of Adaptation</p>
+    </div>
+  )
+}
+
+ReactDOM.createRoot(document.getElementById('root')).render(<App />)
