@@ -2,145 +2,217 @@ import { useRef, useEffect, useState } from "react";
 
 const BallFeedingSim = () => {
   const canvasRef = useRef(null);
-  const [, forceUpdate] = useState(0);
+  const [energy, setEnergy] = useState({ isrm: 100, reflex: 100, ml: 100 });
+  const [alive, setAlive] = useState({ isrm: true, reflex: true, ml: true });
 
   useEffect(() => {
     const canvas = canvasRef.current;
     const ctx = canvas.getContext("2d");
+    canvas.width = canvas.offsetWidth;
+    canvas.height = canvas.offsetHeight;
 
-    const width = canvas.width = 800;
-    const height = canvas.height = 500;
+    const AGENT_RADIUS = 10;
+    const FOOD_RADIUS = 8;
+    const deathThreshold = 10;
+    const deathTimer = { isrm: 0, reflex: 0, ml: 0 };
 
-    const balls = Array.from({ length: 20 }, () => ({
-      x: Math.random() * width,
-      y: Math.random() * height,
-      r: 6,
-    }));
+    const distance = (a, b) => Math.sqrt((a.x - b.x) ** 2 + (a.y - b.y) ** 2);
 
-    const agents = {
-      ISRM: {
-        x: 100,
-        y: height / 2,
-        vx: 0,
-        vy: 0,
-        r: 10,
-        color: "#42f5a7",
-        energy: 50,
-        memory: Array(30).fill(0),
-        score: 0,
-      },
-      Chaser: {
-        x: 700,
-        y: height / 2,
-        vx: 0,
-        vy: 0,
-        r: 10,
-        color: "#4287f5",
-        energy: 50,
-        score: 0,
-      }
+    const makeAgent = (x, y, logicType) => ({
+      x,
+      y,
+      vx: 0,
+      vy: 0,
+      color:
+        logicType === "isrm"
+          ? "#42f5a7"
+          : logicType === "reflex"
+          ? "#4287f5"
+          : "#c2a1f5",
+      logic: logicType,
+      energy: 100,
+      dead: false,
+      memory: { lastValue: 10, lastCost: 1, score: 10 },
+    });
+
+    const makeFood = () => {
+      const x = Math.random() * (canvas.width - 40) + 20;
+      const y = Math.random() * (canvas.height - 40) + 20;
+      return {
+        x,
+        y,
+        type: "normal",
+        value: 10,
+        color: "#f55ac2",
+      };
     };
 
-    function dist(a, b) {
-      return Math.hypot(a.x - b.x, a.y - b.y);
-    }
+    const agents = [
+      makeAgent(100, canvas.height / 2 - 60, "isrm"),
+      makeAgent(canvas.width - 100, canvas.height / 2, "reflex"),
+      makeAgent(canvas.width / 2, canvas.height / 2 + 60, "ml"),
+    ];
 
-    function update() {
-      ctx.clearRect(0, 0, width, height);
+    const foods = Array.from({ length: 5 }).map(() => makeFood());
 
-      // Draw balls
-      balls.forEach(ball => {
+    setInterval(() => {
+      if (foods.length < 40) foods.push(makeFood());
+    }, 300);
+
+    function animate() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+      for (let food of foods) {
         ctx.beginPath();
-        ctx.arc(ball.x, ball.y, ball.r, 0, Math.PI * 2);
-        ctx.fillStyle = "#f55ac2";
+        ctx.arc(food.x, food.y, FOOD_RADIUS, 0, Math.PI * 2);
+        ctx.fillStyle = food.color;
         ctx.fill();
-      });
+      }
 
-      Object.entries(agents).forEach(([label, agent]) => {
-        const closest = balls.reduce((a, b) =>
-          dist(agent, b) < dist(agent, a) ? b : a
-        );
-        const d = dist(agent, closest);
+      for (let agent of agents) {
+        const logic = agent.logic;
+        const e = agent.energy;
 
-        let moved = false;
+        if (agent.dead) {
+          ctx.beginPath();
+          ctx.arc(agent.x, agent.y, AGENT_RADIUS, 0, Math.PI * 2);
+          ctx.fillStyle = "#555";
+          ctx.fill();
+          ctx.fillStyle = "#888";
+          ctx.font = "12px monospace";
+          ctx.fillText(`${logic} ☠`, agent.x + 12, agent.y);
+          continue;
+        }
 
-        if (agent.energy > 5) {
-          const dx = closest.x - agent.x;
-          const dy = closest.y - agent.y;
-          const mag = Math.hypot(dx, dy) || 1;
+        if (e < deathThreshold) {
+          deathTimer[logic]++;
+          if (deathTimer[logic] > 100) {
+            agent.dead = true;
+            setAlive(prev => ({ ...prev, [logic]: false }));
+            continue;
+          }
+        } else {
+          deathTimer[logic] = 0;
+        }
 
-          agent.vx += (dx / mag) * 0.6;
-          agent.vy += (dy / mag) * 0.6;
-          agent.energy -= 2;
-          moved = true;
+        const targets = foods.slice().sort((a, b) => {
+          const distA = distance(agent, a);
+          const distB = distance(agent, b);
+          if (logic === "reflex") return distA - distB;
+          if (logic === "ml") {
+            const scoreA = a.value / (distA + 1);
+            const scoreB = b.value / (distB + 1);
+            return scoreB - scoreA;
+          }
+          // ISRM
+          const scoreA = a.value / (distA + 1);
+          const scoreB = b.value / (distB + 1);
+          return scoreB - scoreA;
+        });
+
+        const target = targets[0];
+        const dx = target.x - agent.x;
+        const dy = target.y - agent.y;
+        const mag = Math.sqrt(dx * dx + dy * dy) || 1;
+
+        let move = false;
+        let speed = 1.0;
+
+        if (logic === "isrm" && agent.energy > 5 && distance(agent, target) < 200) move = true;
+        if (logic === "reflex" && agent.energy > 5) {
+          move = true;
+          speed = e > 50 ? 1.3 : 0.4;
+        }
+        if (logic === "ml" && agent.energy > 5) {
+          move = true;
+          speed = e > 50 ? 1.2 : 0.5;
+        }
+
+        if (move) {
+          agent.vx += (dx / mag) * speed;
+          agent.vy += (dy / mag) * speed;
+          const moveCost = Math.abs(agent.vx) + Math.abs(agent.vy);
+          const totalCost = moveCost * 0.1 + moveCost * 0.025;
+          agent.energy = Math.max(0, agent.energy - totalCost);
+        } else {
+          agent.energy = Math.max(0, agent.energy - 0.025);
+          agent.energy = Math.min(100, agent.energy + 0.05);
         }
 
         agent.x += agent.vx;
         agent.y += agent.vy;
-        agent.vx *= 0.9;
-        agent.vy *= 0.9;
+        agent.vx *= 0.85;
+        agent.vy *= 0.85;
 
-        // Wall bounce (rectangle)
-        if (agent.x - agent.r < 0 || agent.x + agent.r > width) {
-          agent.vx *= -1;
-          agent.x = Math.max(agent.r, Math.min(agent.x, width - agent.r));
-        }
-        if (agent.y - agent.r < 0 || agent.y + agent.r > height) {
-          agent.vy *= -1;
-          agent.y = Math.max(agent.r, Math.min(agent.y, height - agent.r));
+        if (agent.x < AGENT_RADIUS || agent.x > canvas.width - AGENT_RADIUS)
+          agent.vx *= -0.6;
+        if (agent.y < AGENT_RADIUS || agent.y > canvas.height - AGENT_RADIUS)
+          agent.vy *= -0.6;
+
+        agent.x = Math.min(canvas.width - AGENT_RADIUS, Math.max(AGENT_RADIUS, agent.x));
+        agent.y = Math.min(canvas.height - AGENT_RADIUS, Math.max(AGENT_RADIUS, agent.y));
+
+        for (let i = foods.length - 1; i >= 0; i--) {
+          if (distance(agent, foods[i]) < AGENT_RADIUS + FOOD_RADIUS) {
+            const gain = foods[i].value;
+            agent.energy = Math.min(100, agent.energy + gain);
+            if (logic === "ml") {
+              const moveCost = Math.abs(agent.vx) + Math.abs(agent.vy);
+              agent.memory.lastValue = gain;
+              agent.memory.lastCost = moveCost;
+              agent.memory.score = gain / (moveCost + 1);
+            }
+            foods.splice(i, 1);
+            break;
+          }
         }
 
-        const contactIndex = balls.findIndex(b => dist(agent, b) < agent.r + b.r);
-        if (contactIndex !== -1) {
-          agent.energy = Math.min(100, agent.energy + 20);
-          agent.score++;
-          balls.splice(contactIndex, 1);
-          forceUpdate(t => t + 1);
-        }
-
-        if (!moved) {
-          agent.energy = Math.min(100, agent.energy + 0.5);
-        }
-
-        // Draw agent
         ctx.beginPath();
-        ctx.arc(agent.x, agent.y, agent.r, 0, Math.PI * 2);
+        ctx.arc(agent.x, agent.y, AGENT_RADIUS, 0, Math.PI * 2);
         ctx.fillStyle = agent.color;
         ctx.fill();
 
-        // Label + energy bar
-        ctx.fillStyle = "white";
-        ctx.font = "12px monospace";
-        ctx.fillText(`${label}: E=${Math.floor(agent.energy)} S=${agent.score}`, agent.x - 40, agent.y - 20);
+        const barWidth = 40;
+        const energyRatio = agent.energy / 100;
+        ctx.fillStyle = "#444";
+        ctx.fillRect(agent.x - barWidth / 2, agent.y + 16, barWidth, 5);
+        ctx.fillStyle = agent.color;
+        ctx.fillRect(agent.x - barWidth / 2, agent.y + 16, barWidth * energyRatio, 5);
 
-        ctx.fillStyle = "#333";
-        ctx.fillRect(agent.x - 20, agent.y + 15, 40, 5);
-        ctx.fillStyle = "#0f0";
-        ctx.fillRect(agent.x - 20, agent.y + 15, (agent.energy / 100) * 40, 5);
+        ctx.fillStyle = "#ffffff";
+        ctx.font = "12px monospace";
+        ctx.fillText(`${logic}`, agent.x + 12, agent.y);
+      }
+
+      setEnergy({
+        isrm: agents[0].energy,
+        reflex: agents[1].energy,
+        ml: agents[2].energy,
       });
 
-      requestAnimationFrame(update);
+      requestAnimationFrame(animate);
     }
 
-    update();
-
-    // Autopopulate balls every 3 seconds
-    const ballTimer = setInterval(() => {
-      balls.push({
-        x: Math.random() * width,
-        y: Math.random() * height,
-        r: 6,
-      });
-      forceUpdate(t => t + 1);
-    }, 3000);
-
-    return () => clearInterval(ballTimer);
+    animate();
   }, []);
 
   return (
-    <div className="rounded-lg overflow-hidden border border-white/10">
-      <canvas ref={canvasRef} className="w-full h-[500px] bg-black" />
-    </div>
+    <section className="py-20 bg-gray-950 text-white border-t border-white/10">
+      <div className="container mx-auto px-4 max-w-5xl">
+        <h2 className="text-2xl font-bold mb-4">🍽️ Feeding Simulation: ML Comparison</h2>
+        <p className="text-white/70 mb-6">
+          ISRM conserves energy, Reflex chases, and the ML agent learns from food efficiency. Blue food excluded.
+        </p>
+        <div className="rounded-lg overflow-hidden border border-white/10">
+          <canvas ref={canvasRef} className="w-full h-[500px] bg-black" />
+        </div>
+        <div className="mt-4 text-sm text-white/70 flex gap-6 justify-center">
+          <div>🟢 ISRM: {alive.isrm ? energy.isrm.toFixed(0) : "☠"}</div>
+          <div>🔵 Reflex: {alive.reflex ? energy.reflex.toFixed(0) : "☠"}</div>
+          <div>🧠 ML: {alive.ml ? energy.ml.toFixed(0) : "☠"}</div>
+        </div>
+      </div>
+    </section>
   );
 };
 
