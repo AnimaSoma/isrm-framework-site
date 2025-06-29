@@ -199,9 +199,9 @@ const BallAvoidanceSim = () => {
   return (
     <section className="py-20 bg-gray-950 text-white border-t border-white/10">
       <div className="container mx-auto px-4 max-w-5xl">
-        <h2 className="text-2xl font-bold mb-4">⚡ ISRM Arena – Reflex Energy Strategy</h2>
+        <h2 className="text-2xl font-bold mb-4">ISRM Arena – Reflex Energy Strategy</h2>
         <p className="text-white/70 mb-6">
-          Agents now manage energy dynamically. Reflex gains speed with high energy and recovers while resting. ISRM optimizes for prediction. Stoic only acts under pressure.
+          Agents manage energy dynamically. ISRM optimizes for prediction. Reflex gains speed with high energy and recovers while resting. Stoic only acts under pressure.
         </p>
         <div className="rounded-lg overflow-hidden border border-white/10">
           <canvas ref={canvasRef} className="w-full h-[500px] bg-black" />
