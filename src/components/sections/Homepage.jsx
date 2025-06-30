@@ -16,9 +16,9 @@ const Homepage = () => {
         muted
         loop
         playsInline
-        className="absolute top-0 left-0 w-full h-full object-cover opacity-20 z-10"
+        className="absolute top-0 left-0 w-full h-full object-cover opacity-50 z-10"
         style={{
-    filter: 'contrast(4.1) brightness(3.1) saturate(3.0) hue-rotate(80deg)',
+    filter: 'contrast(.9) brightness(.7) saturate(1) hue-rotate(0deg)',
     mixBlendMode: 'screen',
     opacity: 0.9,
   }}
