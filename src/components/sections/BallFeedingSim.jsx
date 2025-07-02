@@ -4,6 +4,11 @@ const BallFeedingSim = () => {
   const canvasRef = useRef(null);
   const [energy, setEnergy] = useState({ isrm: 100, reflex: 100, ml: 100 });
   const [alive, setAlive] = useState({ isrm: true, reflex: true, ml: true });
+  const [stats, setStats] = useState({
+    isrm: { deaths: 0, ballsCollected: 0, respawnTimer: 0 },
+    reflex: { deaths: 0, ballsCollected: 0, respawnTimer: 0 },
+    ml: { deaths: 0, ballsCollected: 0, respawnTimer: 0 }
+  });
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -15,6 +20,13 @@ const BallFeedingSim = () => {
     const FOOD_RADIUS = 8;
     const deathThreshold = 10;
     const deathTimer = { isrm: 0, reflex: 0, ml: 0 };
+    const respawnTimer = { isrm: 0, reflex: 0, ml: 0 };
+    const RESPAWN_TIME = 600; // 10 seconds at 60fps
+    const agentStats = {
+      isrm: { deaths: 0, ballsCollected: 0 },
+      reflex: { deaths: 0, ballsCollected: 0 },
+      ml: { deaths: 0, ballsCollected: 0 }
+    };
 
     const distance = (a, b) => Math.sqrt((a.x - b.x) ** 2 + (a.y - b.y) ** 2);
 
@@ -33,6 +45,7 @@ const BallFeedingSim = () => {
       energy: 100,
       dead: false,
       memory: { lastValue: 10, lastCost: 1, score: 10 },
+      ballsCollected: 0,
     });
 
     const makeFood = () => {
@@ -45,6 +58,19 @@ const BallFeedingSim = () => {
         value: 10,
         color: "#f55ac2",
       };
+    };
+
+    const respawnAgent = (agent) => {
+      // Random position near the center
+      const offsetX = (Math.random() - 0.5) * canvas.width * 0.5;
+      const offsetY = (Math.random() - 0.5) * canvas.height * 0.5;
+      agent.x = canvas.width / 2 + offsetX;
+      agent.y = canvas.height / 2 + offsetY;
+      agent.vx = 0;
+      agent.vy = 0;
+      agent.energy = 100;
+      agent.dead = false;
+      // Keep the ballsCollected count
     };
 
     const agents = [
@@ -62,6 +88,7 @@ const BallFeedingSim = () => {
     function animate() {
       ctx.clearRect(0, 0, canvas.width, canvas.height);
 
+      // Draw foods
       for (let food of foods) {
         ctx.beginPath();
         ctx.arc(food.x, food.y, FOOD_RADIUS, 0, Math.PI * 2);
@@ -74,13 +101,26 @@ const BallFeedingSim = () => {
         const e = agent.energy;
 
         if (agent.dead) {
+          // Draw dead agent
           ctx.beginPath();
           ctx.arc(agent.x, agent.y, AGENT_RADIUS, 0, Math.PI * 2);
           ctx.fillStyle = "#555";
           ctx.fill();
+          
+          // Draw death symbol and respawn timer
           ctx.fillStyle = "#888";
           ctx.font = "12px monospace";
-          ctx.fillText(`${logic} ☠`, agent.x + 12, agent.y);
+          
+          // Increment respawn timer and check if it's time to respawn
+          if (respawnTimer[logic] < RESPAWN_TIME) {
+            respawnTimer[logic]++;
+            const secondsLeft = Math.ceil((RESPAWN_TIME - respawnTimer[logic]) / 60);
+            ctx.fillText(`${logic} ☠ ${secondsLeft}s`, agent.x + 12, agent.y);
+          } else {
+            respawnAgent(agent);
+            respawnTimer[logic] = 0;
+            setAlive(prev => ({ ...prev, [logic]: true }));
+          }
           continue;
         }
 
@@ -88,7 +128,15 @@ const BallFeedingSim = () => {
           deathTimer[logic]++;
           if (deathTimer[logic] > 100) {
             agent.dead = true;
+            agentStats[logic].deaths++;
             setAlive(prev => ({ ...prev, [logic]: false }));
+            setStats(prev => ({
+              ...prev,
+              [logic]: {
+                ...prev[logic],
+                deaths: agentStats[logic].deaths
+              }
+            }));
             continue;
           }
         } else {
@@ -156,6 +204,11 @@ const BallFeedingSim = () => {
           if (distance(agent, foods[i]) < AGENT_RADIUS + FOOD_RADIUS) {
             const gain = foods[i].value;
             agent.energy = Math.min(100, agent.energy + gain);
+            
+            // Track ball collection
+            agent.ballsCollected++;
+            agentStats[logic].ballsCollected = agent.ballsCollected;
+            
             if (logic === "ml") {
               const moveCost = Math.abs(agent.vx) + Math.abs(agent.vy);
               agent.memory.lastValue = gain;
@@ -190,6 +243,25 @@ const BallFeedingSim = () => {
         ml: agents[2].energy,
       });
 
+      // Update stats for UI
+      setStats({
+        isrm: { 
+          deaths: agentStats.isrm.deaths, 
+          ballsCollected: agentStats.isrm.ballsCollected,
+          respawnTimer: respawnTimer.isrm ? Math.ceil((RESPAWN_TIME - respawnTimer.isrm) / 60) : 0
+        },
+        reflex: { 
+          deaths: agentStats.reflex.deaths, 
+          ballsCollected: agentStats.reflex.ballsCollected,
+          respawnTimer: respawnTimer.reflex ? Math.ceil((RESPAWN_TIME - respawnTimer.reflex) / 60) : 0
+        },
+        ml: { 
+          deaths: agentStats.ml.deaths, 
+          ballsCollected: agentStats.ml.ballsCollected,
+          respawnTimer: respawnTimer.ml ? Math.ceil((RESPAWN_TIME - respawnTimer.ml) / 60) : 0
+        }
+      });
+
       requestAnimationFrame(animate);
     }
 
@@ -206,10 +278,22 @@ const BallFeedingSim = () => {
         <div className="rounded-lg overflow-hidden border border-white/10">
           <canvas ref={canvasRef} className="w-full h-[500px] bg-black" />
         </div>
-        <div className="mt-4 text-sm text-white/70 flex gap-6 justify-center">
-          <div>🟢 ISRM: {alive.isrm ? energy.isrm.toFixed(0) : "☠"}</div>
-          <div>🔵 Reflex: {alive.reflex ? energy.reflex.toFixed(0) : "☠"}</div>
-          <div>🧠 ML: {alive.ml ? energy.ml.toFixed(0) : "☠"}</div>
+        <div className="mt-4 text-sm text-white/70 flex gap-6 justify-center flex-wrap">
+          <div className="p-2 bg-gray-900 rounded">
+            🟢 ISRM: {alive.isrm ? energy.isrm.toFixed(0) : stats.isrm.respawnTimer + "s"} | 
+            Balls: {stats.isrm.ballsCollected} | 
+            Deaths: {stats.isrm.deaths}
+          </div>
+          <div className="p-2 bg-gray-900 rounded">
+            🔵 Reflex: {alive.reflex ? energy.reflex.toFixed(0) : stats.reflex.respawnTimer + "s"} | 
+            Balls: {stats.reflex.ballsCollected} | 
+            Deaths: {stats.reflex.deaths}
+          </div>
+          <div className="p-2 bg-gray-900 rounded">
+            🧠 ML: {alive.ml ? energy.ml.toFixed(0) : stats.ml.respawnTimer + "s"} | 
+            Balls: {stats.ml.ballsCollected} | 
+            Deaths: {stats.ml.deaths}
+          </div>
         </div>
       </div>
     </section>

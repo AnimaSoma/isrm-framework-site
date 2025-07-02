@@ -1,8 +1,35 @@
-import React from "react";
+import React, { useRef, useEffect, useState } from "react";
 import BallAvoidanceSim from "./BallAvoidanceSim";
 import BallFeedingSim from "./BallFeedingSim";
+import FractalSim from "./FractalSim";
+import 'katex/dist/katex.min.css';
+import { InlineMath, BlockMath } from 'react-katex';
 
+// Enhanced hover component for math terms using KaTeX
+const HoverMathTerm = ({ math, description }) => {
+  const [isHovering, setIsHovering] = useState(false);
+  
+  return (
+    <span className="inline-block relative">
+      <span 
+        onMouseEnter={() => setIsHovering(true)}
+        onMouseLeave={() => setIsHovering(false)}
+        className="cursor-help text-blue-300 border-b border-dotted border-blue-300"
+      >
+        <InlineMath math={math} />
+      </span>
+      
+      {isHovering && (
+        <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-3 py-2 bg-gray-800 text-white text-sm rounded shadow-lg whitespace-nowrap z-10">
+          {description}
+          <div className="absolute top-full left-1/2 transform -translate-x-1/2 w-2 h-2 bg-gray-800 rotate-45"></div>
+        </div>
+      )}
+    </span>
+  );
+};
 
+// Original hover term for non-math elements
 const HoverTerm = ({ label, description }) => (
   <span className="relative group cursor-help">
     <span className="underline decoration-dotted text-blue-300 font-bold">{label}</span>
@@ -12,11 +39,376 @@ const HoverTerm = ({ label, description }) => (
   </span>
 );
 
+// Perceptual Rivalry Simulation Component
+const PerceptualRivalrySim = () => {
+  const canvasRef = useRef(null);
+  const [error, setError] = useState(0);
+  const [activeModel, setActiveModel] = useState("A");
+  
+  useEffect(() => {
+    const canvas = canvasRef.current;
+    const ctx = canvas.getContext("2d");
+    canvas.width = canvas.offsetWidth;
+    canvas.height = canvas.offsetHeight;
+    
+    const errorThreshold = 5.0;
+    let errorLevel = 0;
+    let model = "A";
+    
+    function draw() {
+      // Clear canvas
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      
+      // Draw a border
+      ctx.strokeStyle = "#444";
+      ctx.lineWidth = 2;
+      ctx.strokeRect(0, 0, canvas.width, canvas.height);
+      
+      // Draw the current perceived state
+      const centerX = canvas.width / 2;
+      const centerY = canvas.height / 2;
+      const size = Math.min(canvas.width, canvas.height) * 0.4;
+      
+      // Draw Necker cube based on current model
+      if (model === "A") {
+        drawNeckerCubeA(ctx, centerX, centerY, size);
+      } else {
+        drawNeckerCubeB(ctx, centerX, centerY, size);
+      }
+      
+      // Draw error accumulation bar
+      const barWidth = canvas.width * 0.8;
+      const barHeight = 20;
+      const barX = (canvas.width - barWidth) / 2;
+      const barY = canvas.height - 40;
+      
+      // Background bar
+      ctx.fillStyle = "#333";
+      ctx.fillRect(barX, barY, barWidth, barHeight);
+      
+      // Error level
+      const errorWidth = (errorLevel / errorThreshold) * barWidth;
+      ctx.fillStyle = errorLevel < errorThreshold * 0.7 ? "#4287f5" : "#f55a42";
+      ctx.fillRect(barX, barY, errorWidth, barHeight);
+      
+      // Threshold marker
+      ctx.strokeStyle = "#fff";
+      ctx.beginPath();
+      ctx.moveTo(barX + barWidth, barY);
+      ctx.lineTo(barX + barWidth, barY + barHeight);
+      ctx.stroke();
+      
+      // Label
+      ctx.fillStyle = "#fff";
+      ctx.font = "12px sans-serif";
+      ctx.fillText("Prediction Error", barX, barY - 5);
+      ctx.fillText("Threshold", barX + barWidth + 5, barY + 12);
+      
+      // Model label
+      ctx.font = "16px sans-serif";
+      ctx.fillText(`Current Perception: Model ${model}`, centerX - 90, canvas.height - 10);
+      
+      // Update error and check for flip
+      errorLevel += 0.03;
+      if (errorLevel >= errorThreshold) {
+        model = model === "A" ? "B" : "A";
+        errorLevel = 0;
+        setActiveModel(model);
+      }
+      
+      setError(errorLevel.toFixed(2));
+      
+      requestAnimationFrame(draw);
+    }
+    
+    function drawNeckerCubeA(ctx, x, y, size) {
+      const s = size / 2;
+      
+      // Draw front face (emphasized)
+      ctx.lineWidth = 3;
+      ctx.strokeStyle = "#42f5a7";
+      ctx.beginPath();
+      ctx.moveTo(x - s, y - s);
+      ctx.lineTo(x + s, y - s);
+      ctx.lineTo(x + s, y + s);
+      ctx.lineTo(x - s, y + s);
+      ctx.lineTo(x - s, y - s);
+      ctx.stroke();
+      
+      // Draw back face (fainter)
+      ctx.lineWidth = 1;
+      ctx.strokeStyle = "#888";
+      ctx.beginPath();
+      ctx.moveTo(x - s/2, y - s/2);
+      ctx.lineTo(x + s/2, y - s/2);
+      ctx.lineTo(x + s/2, y + s/2);
+      ctx.lineTo(x - s/2, y + s/2);
+      ctx.lineTo(x - s/2, y - s/2);
+      ctx.stroke();
+      
+      // Draw connecting lines
+      ctx.beginPath();
+      ctx.moveTo(x - s, y - s);
+      ctx.lineTo(x - s/2, y - s/2);
+      ctx.moveTo(x + s, y - s);
+      ctx.lineTo(x + s/2, y - s/2);
+      ctx.moveTo(x + s, y + s);
+      ctx.lineTo(x + s/2, y + s/2);
+      ctx.moveTo(x - s, y + s);
+      ctx.lineTo(x - s/2, y + s/2);
+      ctx.stroke();
+    }
+    
+    function drawNeckerCubeB(ctx, x, y, size) {
+      const s = size / 2;
+      
+      // Draw back face (emphasized)
+      ctx.lineWidth = 3;
+      ctx.strokeStyle = "#4287f5";
+      ctx.beginPath();
+      ctx.moveTo(x - s/2, y - s/2);
+      ctx.lineTo(x + s/2, y - s/2);
+      ctx.lineTo(x + s/2, y + s/2);
+      ctx.lineTo(x - s/2, y + s/2);
+      ctx.lineTo(x - s/2, y - s/2);
+      ctx.stroke();
+      
+      // Draw front face (fainter)
+      ctx.lineWidth = 1;
+      ctx.strokeStyle = "#888";
+      ctx.beginPath();
+      ctx.moveTo(x - s, y - s);
+      ctx.lineTo(x + s, y - s);
+      ctx.lineTo(x + s, y + s);
+      ctx.lineTo(x - s, y + s);
+      ctx.lineTo(x - s, y - s);
+      ctx.stroke();
+      
+      // Draw connecting lines
+      ctx.beginPath();
+      ctx.moveTo(x - s, y - s);
+      ctx.lineTo(x - s/2, y - s/2);
+      ctx.moveTo(x + s, y - s);
+      ctx.lineTo(x + s/2, y - s/2);
+      ctx.moveTo(x + s, y + s);
+      ctx.lineTo(x + s/2, y + s/2);
+      ctx.moveTo(x - s, y + s);
+      ctx.lineTo(x - s/2, y + s/2);
+      ctx.stroke();
+    }
+    
+    draw();
+  }, []);
+
+  return (
+    <div>
+      <h3 className="text-2xl font-semibold mb-2">Perceptual Rivalry Simulation</h3>
+      <p className="text-white/60 mb-4">
+        This simulation demonstrates how ISRM explains the "flip" in perceptual rivalry. 
+        As prediction error accumulates, it eventually crosses a threshold that triggers a perceptual update.
+      </p>
+      <div className="grid md:grid-cols-2 gap-6">
+        <div className="rounded-lg overflow-hidden border border-white/10">
+          <canvas ref={canvasRef} className="w-full h-[300px] bg-gray-950" />
+        </div>
+        <div className="bg-gray-900 p-6 rounded-lg">
+          <h4 className="text-xl font-semibold mb-3 text-blue-300">ISRM Analysis</h4>
+          <p className="mb-3">
+            In this Necker cube demonstration, the OS (your perception) interprets the ambiguous cube in one of two ways.
+          </p>
+          <p className="mb-3">
+            However, the PS (visual system) continues to receive contradictory evidence that supports both interpretations.
+          </p>
+          <p className="mb-3">
+            This contradiction creates prediction error that accumulates over time, increasing the "pressure" to update.
+          </p>
+          <p className="mb-3">
+            Current state: <span className="font-bold text-blue-300">Model {activeModel}</span>
+          </p>
+          <p className="mb-3">
+            Current error: <span className="font-bold text-blue-300">{error}</span> / 5.0
+          </p>
+          <p className="font-bold">
+            When error crosses the threshold, perception "flips" to the alternative interpretation.
+          </p>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+// AI Comparison Section Component
+const AIComparisonSection = () => {
+  return (
+    <div>
+      <h3 className="text-2xl font-semibold mb-6">Current AI vs. ISRM 2.0 – The Structural Upgrade</h3>
+      
+      <p className="text-white/70 mb-8">
+        Most current AI systems—no matter how large or well-trained—operate as <strong>monolithic predictors</strong>. 
+        They receive input, calculate a response based on learned patterns, and output that result. 
+        What they <em>lack</em> is a structural mechanism for handling uncertainty, internal contradiction, 
+        or resource constraints in real time.
+      </p>
+      
+      <div className="grid md:grid-cols-2 gap-10 mb-12">
+        <div className="bg-gray-900 p-6 rounded-lg border border-blue-900/30">
+          <h4 className="text-xl font-bold mb-4 text-blue-400 flex items-center">
+            <span className="mr-2 text-2xl">🔁</span> Classical AI
+          </h4>
+          <ul className="space-y-2 text-white/70 list-inside">
+            <li className="flex items-start">
+              <span className="text-blue-400 mr-2">-</span>
+              <span>One brain, one prediction.</span>
+            </li>
+            <li className="flex items-start">
+              <span className="text-blue-400 mr-2">-</span>
+              <span>Prediction updated by gradient descent, nearest neighbors, or direct input-response coupling.</span>
+            </li>
+            <li className="flex items-start">
+              <span className="text-blue-400 mr-2">-</span>
+              <span>No memory of internal disagreement. No structured self-model.</span>
+            </li>
+            <li className="flex items-start">
+              <span className="text-blue-400 mr-2">-</span>
+              <span>If input shifts unexpectedly, classical AI either adapts slowly or produces brittle, unstable behavior.</span>
+            </li>
+          </ul>
+        </div>
+        
+        <div className="bg-gray-900 p-6 rounded-lg border border-green-900/30">
+          <h4 className="text-xl font-bold mb-4 text-green-400 flex items-center">
+            <span className="mr-2 text-2xl">🧠</span> ISRM 2.0: Adaptive, Multi-OS Intelligence
+          </h4>
+          <p className="mb-4 text-white/70">
+            ISRM 2.0 replaces the "single mind" with a <strong>stacked, modular mind</strong>—multiple, 
+            independent Observer Systems (OSs), each:
+          </p>
+          <ul className="space-y-2 text-white/70 list-inside">
+            <li className="flex items-start">
+              <span className="text-green-400 mr-2">-</span>
+              <span>Tracks its own predictions.</span>
+            </li>
+            <li className="flex items-start">
+              <span className="text-green-400 mr-2">-</span>
+              <span>Accumulates its own energy, coherence, and salience.</span>
+            </li>
+            <li className="flex items-start">
+              <span className="text-green-400 mr-2">-</span>
+              <span>Reports its local U(t):</span>
+            </li>
+          </ul>
+          <div className="my-4 bg-gray-800 p-3 rounded-md flex justify-center">
+            <code className="text-green-300">U(t) = Salience - EnergyCost + Coherence</code>
+          </div>
+          <p className="text-white/70">
+            These OSs <strong>compete and cooperate</strong> for control, in a dynamic negotiation. 
+            ISRM 2.0 behaves like a parliament of predictive minds, not a dictator of one.
+          </p>
+        </div>
+      </div>
+      
+      <h4 className="text-xl font-semibold mb-4 text-blue-300 flex items-center">
+        <span className="mr-3 text-xl">🧩</span> Core Differences
+      </h4>
+      
+      <div className="overflow-x-auto mb-12">
+        <table className="w-full border-collapse">
+          <thead>
+            <tr className="bg-gray-800">
+              <th className="border border-gray-700 px-4 py-3 text-left">Feature</th>
+              <th className="border border-gray-700 px-4 py-3 text-left">Classical AI</th>
+              <th className="border border-gray-700 px-4 py-3 text-left">ISRM 2.0 Framework</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr className="bg-gray-900">
+              <td className="border border-gray-700 px-4 py-3 font-medium">Prediction Source</td>
+              <td className="border border-gray-700 px-4 py-3 text-white/70">Single inference engine</td>
+              <td className="border border-gray-700 px-4 py-3 text-green-300">Multiple Observer Systems (OSs)</td>
+            </tr>
+            <tr className="bg-gray-900">
+              <td className="border border-gray-700 px-4 py-3 font-medium">Conflict Handling</td>
+              <td className="border border-gray-700 px-4 py-3 text-white/70">No awareness of contradiction</td>
+              <td className="border border-gray-700 px-4 py-3 text-green-300">Competing U(t) values arbitrate dominance</td>
+            </tr>
+            <tr className="bg-gray-900">
+              <td className="border border-gray-700 px-4 py-3 font-medium">Adaptation Mode</td>
+              <td className="border border-gray-700 px-4 py-3 text-white/70">Input-driven gradient update</td>
+              <td className="border border-gray-700 px-4 py-3 text-green-300">Energy- and coherence-aware feedback loop</td>
+            </tr>
+            <tr className="bg-gray-900">
+              <td className="border border-gray-700 px-4 py-3 font-medium">Self-Model</td>
+              <td className="border border-gray-700 px-4 py-3 text-white/70">Absent or hardcoded</td>
+              <td className="border border-gray-700 px-4 py-3 text-green-300">Emergent through OS interaction and arbitration</td>
+            </tr>
+            <tr className="bg-gray-900">
+              <td className="border border-gray-700 px-4 py-3 font-medium">Memory of Error</td>
+              <td className="border border-gray-700 px-4 py-3 text-white/70">Limited to parameters or buffers</td>
+              <td className="border border-gray-700 px-4 py-3 text-green-300">Tracked via coherence decay and U(t) trajectory</td>
+            </tr>
+            <tr className="bg-gray-900">
+              <td className="border border-gray-700 px-4 py-3 font-medium">Control Strategy</td>
+              <td className="border border-gray-700 px-4 py-3 text-white/70">Linear regression toward target</td>
+              <td className="border border-gray-700 px-4 py-3 text-green-300">Adaptive arbitration under energetic constraint</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      
+      <h4 className="text-xl font-semibold mb-4 text-blue-300 flex items-center">
+        <span className="mr-3 text-xl">🚀</span> Why ISRM Is Superior
+      </h4>
+      
+      <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
+        <div className="bg-gray-900 p-5 rounded-lg border border-green-900/30">
+          <h5 className="font-bold mb-2 text-green-400">Resilience</h5>
+          <p className="text-white/70">
+            ISRM agents degrade gracefully—when energy is low, they don't crash; they negotiate minimal behavior.
+          </p>
+        </div>
+        
+        <div className="bg-gray-900 p-5 rounded-lg border border-green-900/30">
+          <h5 className="font-bold mb-2 text-green-400">Insight</h5>
+          <p className="text-white/70">
+            Contradiction isn't discarded, it's preserved and resolved over time, simulating internal debate.
+          </p>
+        </div>
+        
+        <div className="bg-gray-900 p-5 rounded-lg border border-green-900/30">
+          <h5 className="font-bold mb-2 text-green-400">Modularity</h5>
+          <p className="text-white/70">
+            Visual, audio, somatic, emotional, and cognitive modules all operate semi-independently.
+          </p>
+        </div>
+        
+        <div className="bg-gray-900 p-5 rounded-lg border border-green-900/30">
+          <h5 className="font-bold mb-2 text-green-400">Transparency</h5>
+          <p className="text-white/70">
+            Each OS can be logged and visualized, making ISRM systems inherently auditable.
+          </p>
+        </div>
+        
+        
+        <div className="bg-gray-900 p-5 rounded-lg border border-green-900/30">
+          <h5 className="font-bold mb-2 text-green-400">Emergence</h5>
+          <p className="text-white/70">
+            Narrative selves, trauma patterns, creativity—all arise from the tension and harmony of nested OSs.
+          </p>
+        </div>
+      </div>
+      
+      <p className="text-xl text-center font-medium text-green-400 mt-10 mb-10">
+        Classical AI gives you an answer. ISRM 2.0 gives you a mind.
+      </p>
+    </div>
+  );
+};
+
 const SimulationsSection = () => {
   return (
     <>
       <div className="relative w-full min-h-screen bg-black">
-        <video autoPlay muted loop playsInline className="absolute top-20 left-0 w-full h-[80vh] object-cover opacity-20 z-0">
+        <video autoPlay muted loop playsInline className="absolute top-20 left-0 w-full h-[80vh] object-cover opacity-10 z-0">
           <source src="/My Movie 1.mp4" type="video/mp4" />
         </video>
         <div className="relative z-10 py-32 text-center text-white">
@@ -25,15 +417,52 @@ const SimulationsSection = () => {
             Understanding adaptation across biological, artificial, and physical systems has long demanded a unifying principle capable of integrating prediction, coherence, and energetic limitation. Here, we introduce the Interactionist Self-Regulation Model (ISRM), a general framework grounded in the energetic cost of state updating under constraint. The model posits that all adaptive systems—whether molecular or cognitive, synthetic or cosmological—operate by modulating a scalar signal:
           </p>
 
-          <div className="mt-10 text-blue-300 text-4xl font-serif">
-            U(t) = Σ(<HoverTerm label="Sᵢ" description="Salience of input ᵢ" /> × <HoverTerm label="PEᵢ" description="Prediction error for input ᵢ" /> × <HoverTerm label="Eᵢ" description="Available energy for update ᵢ" />)
+          {/* Enhanced KaTeX Equation */}
+          <div className="mt-10 text-center">
+            <BlockMath 
+              math="U(t)=(\alpha M(t) + \beta \sigma^2(t)) \cdot (E_{max} - \gamma \int_0^t U(\tau)d\tau + I(t)) \cdot \delta|S_{PS}(t) - S_{OS}(t)|" 
+            />
           </div>
 
-          <div className="mt-10 space-y-2 text-white/80 text-sm max-w-xl mx-auto">
-            <p><strong>Sᵢ</strong>: The salience of an incoming signal or internal representation, weighted by context and memory.</p>
-            <p><strong>PEᵢ</strong>: The prediction error, representing mismatch between expected and actual outcomes.</p>
-            <p><strong>Eᵢ</strong>: The system’s available energetic budget for adaptation, modulating whether action is taken.</p>
-            <p><strong>U(t)</strong>: The total update signal, determining whether or not the system will adapt in the current timestep.</p>
+          <div className="mt-6 text-sm grid grid-cols-1 md:grid-cols-2 gap-2 max-w-3xl mx-auto text-left">
+            <div className="flex items-center">
+              <span className="w-12 text-blue-300"><InlineMath math="\alpha, \beta" /></span>
+              <span className="text-white/80">Salience parameters</span>
+            </div>
+            <div className="flex items-center">
+              <span className="w-12 text-blue-300"><InlineMath math="M(t)" /></span>
+              <span className="text-white/80">Magnitude of signal</span>
+            </div>
+            <div className="flex items-center">
+              <span className="w-12 text-blue-300"><InlineMath math="\sigma^2(t)" /></span>
+              <span className="text-white/80">Variance/novelty of signal</span>
+            </div>
+            <div className="flex items-center">
+              <span className="w-12 text-blue-300"><InlineMath math="E_{max}" /></span>
+              <span className="text-white/80">Maximum energy capacity</span>
+            </div>
+            <div className="flex items-center">
+              <span className="w-12 text-blue-300"><InlineMath math="\gamma" /></span>
+              <span className="text-white/80">Energy cost per update</span>
+            </div>
+            <div className="flex items-center">
+              <span className="w-12 text-blue-300"><InlineMath math="I(t)" /></span>
+              <span className="text-white/80">Energy input over time</span>
+            </div>
+            <div className="flex items-center">
+              <span className="w-12 text-blue-300"><InlineMath math="\delta" /></span>
+              <span className="text-white/80">Error sensitivity</span>
+            </div>
+            <div className="flex items-center">
+              <span className="w-12 text-blue-300"><InlineMath math="S_{PS}, S_{OS}" /></span>
+              <span className="text-white/80">Physical and Observer systems</span>
+            </div>
+          </div>
+
+          <div className="mt-6 text-center">
+            <p className="text-lg text-white/80">
+              The update occurs when <InlineMath math="U(t) > U_{threshold}" />, where <InlineMath math="U_{threshold}" /> is the system's resistance to change.
+            </p>
           </div>
         </div>
       </div>
@@ -47,6 +476,10 @@ const SimulationsSection = () => {
             </p>
           </div>
 
+          {/* Perceptual Rivalry Simulation - NEW */}
+          <PerceptualRivalrySim />
+
+          {/* Original Ball Avoidance Simulation */}
           <div>
             <h3 className="text-2xl font-semibold mb-2">ISRM Ball Avoidance Simulation</h3>
             <p className="text-white/60 mb-4">
@@ -54,7 +487,17 @@ const SimulationsSection = () => {
             </p>
             <BallAvoidanceSim />
           </div>
+          
+          {/* Original Fractal Simulation */}
+          <div>
+            <h3 className="text-2xl font-semibold mb-2">ISRM Fractal Coherence Simulation</h3>
+            <p className="text-white/60 mb-4">
+              This simulation visualizes recursive self-regulation through a dynamic fractal lattice. Each branch adapts based on coherence, prediction error, and energetic constraint. Touch it—watch how it remembers, decays, and reforms.
+            </p>
+            <FractalSim />
+          </div>
 
+          {/* Original Ball Feeding Simulation */}
           <div>
             <h3 className="text-2xl font-semibold mb-2">ISRM Ball Feeding Simulation</h3>
             <p className="text-white/60 mb-4">
@@ -62,6 +505,9 @@ const SimulationsSection = () => {
             </p>
             <BallFeedingSim />
           </div>
+          
+          {/* AI Comparison Section - NEW */}
+          <AIComparisonSection />
         </div>
       </section>
     </>
