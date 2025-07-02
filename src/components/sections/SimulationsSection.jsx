@@ -73,6 +73,184 @@ const ResponsiveEquation = () => {
   );
 };
 
+// ISRM Introduction Section
+const ISRMIntroduction = () => {
+  return (
+    <div className="py-16 bg-gray-900 text-white border-y border-white/10">
+      <div className="container mx-auto px-4 max-w-5xl">
+        <h2 className="text-3xl sm:text-4xl font-bold mb-8 text-center">Introduction to ISRM</h2>
+        
+        <div className="space-y-12">
+          {/* Core Concept */}
+          <div>
+            <h3 className="text-xl sm:text-2xl font-semibold mb-4 text-blue-300">The Fundamental Duality</h3>
+            <p className="text-sm sm:text-base text-white/80 mb-4">
+              At its core, the Interactionist Self-Regulation Model (ISRM) proposes that all complex adaptive systems—from single cells to human brains, from quantum particles to financial markets—operate through a fundamental duality:
+            </p>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
+              <div className="bg-gray-800/50 p-5 rounded-lg border-l-4 border-blue-500">
+                <h4 className="text-lg font-semibold mb-2 text-blue-300">Observer System (OS)</h4>
+                <p className="text-sm sm:text-base text-white/80">
+                  The Observer System is the system's internal <em>model</em> of reality—its simplified, predictive representation of itself and its environment. This is the story the system tells itself about what is happening and what will happen next.
+                </p>
+                <div className="mt-4 text-sm">
+                  <div className="flex items-start mb-2">
+                    <span className="text-blue-400 mr-2 mt-1">•</span>
+                    <span>In a <strong>brain</strong>, the OS is your conscious experience and expectations.</span>
+                  </div>
+                  <div className="flex items-start mb-2">
+                    <span className="text-blue-400 mr-2 mt-1">•</span>
+                    <span>In a <strong>market</strong>, the OS is the prevailing price consensus and narrative.</span>
+                  </div>
+                  <div className="flex items-start">
+                    <span className="text-blue-400 mr-2 mt-1">•</span>
+                    <span>In a <strong>particle</strong>, the OS is its inertial tendency to maintain its current state.</span>
+                  </div>
+                </div>
+              </div>
+              
+              <div className="bg-gray-800/50 p-5 rounded-lg border-l-4 border-green-500">
+                <h4 className="text-lg font-semibold mb-2 text-green-300">Physical System (PS)</h4>
+                <p className="text-sm sm:text-base text-white/80">
+                  The Physical System is the raw, unfiltered, high-dimensional data stream of reality. It represents the "ground truth" of what is actually happening, regardless of what the OS expects or believes.
+                </p>
+                <div className="mt-4 text-sm">
+                  <div className="flex items-start mb-2">
+                    <span className="text-green-400 mr-2 mt-1">•</span>
+                    <span>In a <strong>brain</strong>, the PS is the full sensory input stream from your body and environment.</span>
+                  </div>
+                  <div className="flex items-start mb-2">
+                    <span className="text-green-400 mr-2 mt-1">•</span>
+                    <span>In a <strong>market</strong>, the PS is the real-time firehose of all trades, news, and economic data.</span>
+                  </div>
+                  <div className="flex items-start">
+                    <span className="text-green-400 mr-2 mt-1">•</span>
+                    <span>In a <strong>particle</strong>, the PS is the chaotic bombardment by surrounding molecules or fields.</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          {/* The Interaction Process */}
+          <div>
+            <h3 className="text-xl sm:text-2xl font-semibold mb-4 text-blue-300">The ISRM Loop: How OS and PS Interact</h3>
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 mt-6">
+              <div className="bg-gray-800/50 p-5 rounded-lg">
+                <div className="flex items-center mb-3">
+                  <div className="w-8 h-8 rounded-full bg-blue-500 flex items-center justify-center text-white font-bold mr-3">1</div>
+                  <h4 className="font-semibold text-white">Prediction</h4>
+                </div>
+                <p className="text-sm text-white/80">
+                  The OS makes a prediction about what will happen in the next moment, based on its current model of reality. This prediction is a simplified, low-energy representation.
+                </p>
+              </div>
+              
+              <div className="bg-gray-800/50 p-5 rounded-lg">
+                <div className="flex items-center mb-3">
+                  <div className="w-8 h-8 rounded-full bg-blue-500 flex items-center justify-center text-white font-bold mr-3">2</div>
+                  <h4 className="font-semibold text-white">Comparison</h4>
+                </div>
+                <p className="text-sm text-white/80">
+                  The PS provides the actual data of what occurs. The system compares this raw reality against its prediction, calculating the difference as a <strong>Prediction Error</strong>.
+                </p>
+              </div>
+              
+              <div className="bg-gray-800/50 p-5 rounded-lg">
+                <div className="flex items-center mb-3">
+                  <div className="w-8 h-8 rounded-full bg-blue-500 flex items-center justify-center text-white font-bold mr-3">3</div>
+                  <h4 className="font-semibold text-white">Arbitration</h4>
+                </div>
+                <p className="text-sm text-white/80">
+                  The system performs <strong>Energetic Arbitration</strong> on this error. Is it important enough (Salience) and does the system have enough energy (Energy Budget) to justify a costly update?
+                </p>
+              </div>
+            </div>
+            
+            <div className="flex items-center justify-center my-4">
+              <svg className="w-6 h-6 text-blue-300" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 14l-7 7m0 0l-7-7m7 7V3" />
+              </svg>
+            </div>
+            
+            <div className="grid grid-cols-1 gap-4 mt-2">
+              <div className="bg-gray-800/50 p-5 rounded-lg">
+                <div className="flex items-center mb-3">
+                  <div className="w-8 h-8 rounded-full bg-blue-500 flex items-center justify-center text-white font-bold mr-3">4</div>
+                  <h4 className="font-semibold text-white">The Decision Point</h4>
+                </div>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div>
+                    <p className="text-sm mb-3 font-medium text-yellow-300">IF U(t) &lt; U_threshold:</p>
+                    <p className="text-sm text-white/80 border-l-2 border-yellow-500 pl-3">
+                      The error is ignored or filtered. The OS maintains its current model, preserving energy but potentially accumulating error over time. Most errors fall into this category.
+                    </p>
+                  </div>
+                  <div>
+                    <p className="text-sm mb-3 font-medium text-green-300">IF U(t) > U_threshold:</p>
+                    <p className="text-sm text-white/80 border-l-2 border-green-500 pl-3">
+                      An <strong>Update Event</strong> occurs. The system spends significant energy to update its OS, aligning it with the PS data. This is what we experience as a moment of consciousness or a state change.
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          {/* Coherence */}
+          <div>
+            <h3 className="text-xl sm:text-2xl font-semibold mb-4 text-blue-300">Coherence: The Core Metric</h3>
+            <p className="text-sm sm:text-base text-white/80 mb-6">
+              Coherence is the degree of alignment between the OS and PS—between expectation and reality. It is what all ISRM systems strive to maintain, though always under energetic constraint:
+            </p>
+            
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <div className="bg-gray-800/50 p-5 rounded-lg border-t-2 border-red-500">
+                <h4 className="font-semibold mb-2 text-red-300">Low Coherence</h4>
+                <p className="text-sm text-white/80">
+                  When OS and PS are severely misaligned, the system experiences high prediction error. This state is energetically expensive to maintain and often leads to a major update or breakdown.
+                </p>
+                <p className="text-sm mt-2 italic text-white/60">
+                  Examples: Cognitive dissonance, market crash, quantum collapse
+                </p>
+              </div>
+              
+              <div className="bg-gray-800/50 p-5 rounded-lg border-t-2 border-yellow-500">
+                <h4 className="font-semibold mb-2 text-yellow-300">Medium Coherence</h4>
+                <p className="text-sm text-white/80">
+                  A dynamic balance of minor errors and updates. The system maintains moderate energy expenditure while adapting to changing conditions. This is the typical operational state.
+                </p>
+                <p className="text-sm mt-2 italic text-white/60">
+                  Examples: Normal consciousness, stable market, chemical equilibrium
+                </p>
+              </div>
+              
+              <div className="bg-gray-800/50 p-5 rounded-lg border-t-2 border-green-500">
+                <h4 className="font-semibold mb-2 text-green-300">High Coherence</h4>
+                <p className="text-sm text-white/80">
+                  When OS perfectly predicts PS, prediction error is zero. This rare state is energetically efficient but often temporary in complex environments. It's experienced as "flow."
+                </p>
+                <p className="text-sm mt-2 italic text-white/60">
+                  Examples: Flow state, perfect market efficiency, ground state of an atom
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <div className="mt-12 text-center">
+          <p className="text-base sm:text-lg font-medium text-blue-300">
+            ISRM provides a unified framework for understanding adaptation, stability, and change across all complex systems.
+          </p>
+          <p className="text-sm sm:text-base text-white/70 mt-2">
+            The simulations below demonstrate these principles in action.
+          </p>
+        </div>
+      </div>
+    </div>
+  );
+};
+
 // Perceptual Rivalry Simulation Component
 const PerceptualRivalrySim = () => {
   const canvasRef = useRef(null);
@@ -511,6 +689,9 @@ const SimulationsSection = () => {
           </div>
         </div>
       </div>
+
+      {/* New Introduction Section */}
+      <ISRMIntroduction />
 
       <section className="py-16 sm:py-28 bg-gray-950 text-white border-t border-white/10">
         <div className="container mx-auto px-4 max-w-5xl space-y-16 sm:space-y-20">
