@@ -624,8 +624,15 @@ const AIComparisonSection = () => {
         </div>
       </div>
       
-      <p className="text-lg sm:text-xl text-center font-medium text-green-400 mt-8 sm:mt-10 mb-8 sm:mb-10">
-        Classical AI gives you an answer. ISRM 2.0 gives you a mind.
+      <p className="text-xl sm:text-xl text-center font-medium text-green-400 mt-8 sm:mt-10 mb-8 sm:mb-10">
+            Classical AI gives you an answer. ISRM 2.0 gives you a mind. 
+            </p>
+        <p className="text-xs sm:text-xs text-center font-medium text-green-400 mt-8 sm:mt-10 mb-8 sm:mb-10">
+            For More Information contact me JP Schell, Stem Cell Biologist/Systems Theorist 
+            📍 https://github.com/AnimaSoma/isrm-framework-site STOCKHOLM, SWEDEN
+            📧 johnpaulschell@gmail.com.
+          <p className="text-xs sm:text-xs text-center font-medium text-green-400 mt-8 sm:mt-10 mb-8 sm:mb-10"></p> 
+            Suggested citation format: Schell, J.P. Interactionist Self-Regulation Model (ISRM): A Unifying Principle of Adaptive Systems. 2025. https://isrm-framework.org.
       </p>
     </div>
   );
