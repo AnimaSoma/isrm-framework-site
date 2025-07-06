@@ -271,9 +271,9 @@ const BallFeedingSim = () => {
   return (
     <section className="py-20 bg-gray-950 text-white border-t border-white/10">
       <div className="container mx-auto px-4 max-w-5xl">
-        <h2 className="text-2xl font-bold mb-4">Feeding Simulation: Machine Learning Comparison</h2>
+        <h2 className="text-2xl font-bold mb-4"></h2>
         <p className="text-white/70 mb-6">
-          ISRM conserves energy, Reflex chases, and the Machine Learning agent learns from food efficiency.
+          
         </p>
         <div className="rounded-lg overflow-hidden border border-white/10">
           <canvas ref={canvasRef} className="w-full h-[500px] bg-black" />
